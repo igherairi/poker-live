@@ -37,6 +37,19 @@
     modal.innerHTML = `
       <div style="font-weight:700;margin-bottom:8px">Cloud Sync (POC)</div>
       <div style="font-size:12px;margin-bottom:6px;color:#c7d2da">Supabase example: set URL and anon key (or bearer token), then Push/Pull. Use with care; this is an opt-in tool.</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
+        <div style="flex:1">
+          <label style="font-size:12px">Email</label>
+          <input id="poker-auth-email" style="width:100%;margin-bottom:6px;padding:6px;border-radius:6px;border:1px solid #234;" value="" />
+          <label style="font-size:12px">Password</label>
+          <input id="poker-auth-pass" type="password" style="width:100%;margin-bottom:6px;padding:6px;border-radius:6px;border:1px solid #234;" value="" />
+          <div style="display:flex;gap:6px;">
+            <button id="poker-signup" style="flex:1;padding:8px;border-radius:6px">Sign up</button>
+            <button id="poker-signin" style="flex:1;padding:8px;border-radius:6px">Sign in</button>
+          </div>
+          <div style="margin-top:6px;text-align:right;"><button id="poker-signout" style="padding:6px 8px;border-radius:6px">Sign out</button></div>
+        </div>
+      </div>
       <label style="font-size:12px">Supabase URL</label>
       <input id="poker-sync-url" style="width:100%;margin-bottom:6px;padding:6px;border-radius:6px;border:1px solid #234;" value="${cfg.url||''}" />
       <label style="font-size:12px">Supabase Anon Key</label>
@@ -62,10 +75,61 @@
 
     document.body.appendChild(modal);
 
+    // Auth handlers using supabase-js (loaded via CDN)
+    async function getSupabaseClient(){
+      const cfg = loadConfig();
+      if(!cfg.url || !cfg.key) return null;
+      if(window.supabase && typeof window.supabase.createClient==='function'){
+        return window.supabase.createClient(cfg.url, cfg.key);
+      }
+      return null;
+    }
+
+    modal.querySelector('#poker-signup').onclick = async ()=>{
+      const email = modal.querySelector('#poker-auth-email').value.trim();
+      const pass = modal.querySelector('#poker-auth-pass').value;
+      if(!email || !pass){ alert('Enter email and password'); return; }
+      const client = await getSupabaseClient();
+      if(!client){ alert('Set Supabase URL and anon key first.'); return; }
+      try{
+        const res = await client.auth.signUp({ email, password: pass });
+        if(res.error) alert('Sign up error: '+res.error.message);
+        else { alert('Sign up initiated. Check your email for confirmation (if enabled).'); }
+      }catch(e){ console.error('signup',e); alert('Sign up failed: '+e.message); }
+    };
+
+    modal.querySelector('#poker-signin').onclick = async ()=>{
+      const email = modal.querySelector('#poker-auth-email').value.trim();
+      const pass = modal.querySelector('#poker-auth-pass').value;
+      if(!email || !pass){ alert('Enter email and password'); return; }
+      const client = await getSupabaseClient();
+      if(!client){ alert('Set Supabase URL and anon key first.'); return; }
+      try{
+        // Using v2 API method
+        const { data, error } = await client.auth.signInWithPassword({ email, password: pass });
+        if(error){ alert('Sign in error: '+error.message); console.error(error); return; }
+        const session = data.session || (data && data.user ? data : null);
+        const cfg = loadConfig();
+        if(session && session.access_token){ cfg.token = session.access_token; saveConfig(cfg); alert('Signed in — token saved to local config.'); }
+        else alert('Signed in (no token available).');
+      }catch(e){ console.error('signin',e); alert('Sign in failed: '+e.message); }
+    };
+
+    modal.querySelector('#poker-signout').onclick = async ()=>{
+      const client = await getSupabaseClient();
+      if(!client){ alert('No client'); return; }
+      try{ const { error } = await client.auth.signOut(); if(error) console.error(error); alert('Signed out'); const cfg = loadConfig(); delete cfg.token; saveConfig(cfg); }catch(e){ console.error('signout',e); alert('Sign out failed'); }
+    };
+
+
+
     modal.querySelector('#poker-sync-save').onclick = ()=>{
       const url = modal.querySelector('#poker-sync-url').value.trim();
       const key = modal.querySelector('#poker-sync-key').value.trim();
-      saveConfig({url,key});
+      const token = modal.querySelector('#poker-sync-token').value.trim();
+      const cfg = { url, key };
+      if(token) cfg.token = token;
+      saveConfig(cfg);
       alert('Config saved (localStorage).');
     };
     modal.querySelector('#poker-sync-clear').onclick = ()=>{ saveConfig({}); modal.querySelector('#poker-sync-url').value=''; modal.querySelector('#poker-sync-key').value=''; alert('Config cleared'); };
