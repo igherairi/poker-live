@@ -257,6 +257,34 @@
     }catch(e){ console.error('pull failed', e); alert('Pull failed: '+e.message); }
   }
 
+  // Realtime helpers
+  window.pokerSync._channels = window.pokerSync._channels || {};
+  window.pokerSync.subscribeToGame = function(gameId, onChange){
+    if(!gameId) return null;
+    const key = 'game_'+gameId;
+    if(window.pokerSync._channels[key]) return window.pokerSync._channels[key];
+    (async ()=>{
+      const client = await getSupabaseClient();
+      if(!client){ console.warn('Supabase client not available for realtime'); return; }
+      try{
+        const channel = client.channel('public:games:'+gameId)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'games', filter: 'id=eq.'+gameId }, (payload)=>{
+            if(typeof onChange==='function') onChange(payload);
+          })
+          .subscribe();
+        window.pokerSync._channels[key] = channel;
+      }catch(e){ console.error('subscribeToGame error', e); }
+    })();
+    return key;
+  };
+  window.pokerSync.unsubscribeFromGame = function(handle){
+    const key = handle;
+    const ch = window.pokerSync._channels[key];
+    if(!ch) return;
+    try{ ch.unsubscribe(); }catch(e){ console.error('unsubscribe failed', e); }
+    delete window.pokerSync._channels[key];
+  };
+
   // expose
   window.pokerSync.saveConfig = saveConfig;
   window.pokerSync.loadConfig = loadConfig;

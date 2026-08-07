@@ -599,7 +599,26 @@ function shiftCalendarMonth(delta){
   state.calendarMonth = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
   render();
 }
-function openGame(id){ state.activeGameId = id; state.view = 'game-detail'; render(); }
+function openGame(id){
+  // unsubscribe previous
+  try{ if(window.pokerSync && window.pokerSync.unsubscribeFromGame && window._currentGameSub) { window.pokerSync.unsubscribeFromGame(window._currentGameSub); window._currentGameSub = null; } }catch(e){console.error(e);} 
+  state.activeGameId = id; state.view = 'game-detail'; render();
+  // subscribe to realtime updates for this game (if available)
+  try{
+    if(window.pokerSync && window.pokerSync.subscribeToGame){
+      window._currentGameSub = window.pokerSync.subscribeToGame(id, (payload)=>{
+        try{ // payload may contain new record
+          if(payload && payload.new){
+            // find and replace game in state.games
+            const updated = payload.new;
+            state.games = state.games.map(g=>g.id===updated.id? updated : g);
+            render();
+          }
+        }catch(e){console.error('realtime handler',e);}      
+      });
+    }
+  }catch(e){console.error('subscribe failed',e);} 
+}
 
 /* ---------- Modal ---------- */
 function closeModal(){ state.modal = null; render(); }
