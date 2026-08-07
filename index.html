@@ -740,6 +740,7 @@ async function joinGame(gameId){
   if(game.participants.length>=game.maxPlayers){ toast('Table complète'); return; }
   game.participants.push({ playerId: state.currentPlayer.id, pseudo: state.currentPlayer.pseudo, paymentMethod: state.currentPlayer.paymentMethod || 'Espèces', buyIns: [], requests: [], cashOut: null, joinedAt: Date.now() });
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   toast('Inscription confirmée');
   render();
 }
@@ -748,6 +749,7 @@ async function leaveGame(gameId){
   if(!game) return;
   game.participants = game.participants.filter(p=>p.playerId!==state.currentPlayer.id);
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   toast('Désinscription effectuée');
   render();
 }
@@ -771,6 +773,7 @@ async function submitAdminAddPlayer(){
   if(game.status==='live'){ participant.buyIns.push({ amount: game.buyIn, method, at: Date.now() }); }
   game.participants.push(participant);
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   state.modal = null;
   toast(player.pseudo+' ajouté à la partie');
   render();
@@ -789,6 +792,7 @@ async function addAllPlayersToGame(gameId){
     game.participants.push(participant);
   });
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   toast(toAdd.length+' joueur(s) ajouté(s)');
   render();
 }
@@ -796,6 +800,7 @@ async function removeParticipantAdmin(gameId, playerId){
   const game = state.games.find(g=>g.id===gameId);
   game.participants = game.participants.filter(p=>p.playerId!==playerId);
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   toast('Joueur retiré de la partie');
   render();
 }
@@ -809,6 +814,7 @@ async function startGame(gameId){
   game.startedAt = game.startedAt || Date.now();
   game.participants.forEach(p=>{ if(p.buyIns.length===0) p.buyIns.push({ amount: game.buyIn, method: p.paymentMethod || 'Espèces', at: Date.now() }); });
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   toast('Partie lancée');
   render();
 }
@@ -832,6 +838,7 @@ async function submitBuyin(){
   p.buyIns.push({ amount, method, at: Date.now() });
   if(game.status==='completed') recomputeParticipantFinancials(p);
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   state.modal = null;
   toast('Recave ajoutée');
   render();
@@ -851,6 +858,7 @@ async function submitEditBuyin(){
   p.buyIns[index].method = method;
   if(game.status==='completed') recomputeParticipantFinancials(p);
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   state.modal = null;
   toast('Recave modifiée');
   render();
@@ -861,6 +869,7 @@ async function removeBuyin(gameId, playerId, index){
   p.buyIns.splice(index, 1);
   if(game.status==='completed') recomputeParticipantFinancials(p);
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   toast('Recave supprimée');
   render();
 }
@@ -877,6 +886,7 @@ async function submitEditArrival(){
   const p = game.participants.find(p=>p.playerId===playerId);
   p.joinedAt = new Date(date+'T'+time).getTime();
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   state.modal = null;
   toast("Heure d'arrivée mise à jour");
   render();
@@ -901,6 +911,7 @@ async function submitRequestBuyin(){
   if(!p.requests) p.requests = [];
   p.requests.push({ id: uid('req'), amount, method, requestedAt: Date.now(), status:'pending', resolvedAt:null, resolvedBy:null });
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   state.modal = null;
   toast('Demande envoyée — en attente de validation');
   render();
@@ -915,6 +926,7 @@ async function confirmBuyinRequest(gameId, playerId, requestId){
   req.resolvedBy = state.currentPlayer.pseudo;
   p.buyIns.push({ amount: req.amount, method: req.method, at: req.requestedAt });
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   toast('Recave confirmée');
   render();
 }
@@ -927,6 +939,7 @@ async function refuseBuyinRequest(gameId, playerId, requestId){
   req.resolvedAt = Date.now();
   req.resolvedBy = state.currentPlayer.pseudo;
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   toast('Demande refusée');
   render();
 }
@@ -977,6 +990,7 @@ async function submitCashout(){
   p.cashOutAt = Date.now();
   if(game.status==='completed') recomputeParticipantFinancials(p);
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   state.modal = null;
   toast('Cash-out enregistré');
   render();
@@ -994,6 +1008,7 @@ async function closeGame(gameId){
   game.status = 'completed';
   game.endedAt = game.endedAt || Date.now();
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   const unsetSalaries = (game.staffAssignments||[]).filter(a=>a.salary===null || a.salary===undefined).length;
   toast(unsetSalaries>0 ? `Partie clôturée — pense à définir le salaire de ${unsetSalaries} membre(s) du staff` : 'Partie clôturée');
   render();
@@ -1025,6 +1040,7 @@ async function submitRake(){
   if(!game.rakeEntries) game.rakeEntries = [];
   game.rakeEntries.push({ id: uid('r'), amount, at: Date.now() });
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   state.modal = null;
   toast('Rake enregistré');
   render();
@@ -1033,6 +1049,8 @@ async function removeRakeEntry(gameId, entryId){
   const game = state.games.find(g=>g.id===gameId);
   game.rakeEntries = game.rakeEntries.filter(r=>r.id!==entryId);
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   render();
 }
 
@@ -1050,6 +1068,7 @@ async function submitTip(){
   if(!game.tipEntries) game.tipEntries = [];
   game.tipEntries.push({ id: uid('tip'), role, amount, at: Date.now() });
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   state.modal = null;
   toast('Pourboire enregistré');
   render();
@@ -1104,6 +1123,7 @@ async function submitAssignStaff(){
   if(!game.staffAssignments) game.staffAssignments = [];
   game.staffAssignments.push({ id: uid('sa'), staffId, name: staffMember.name, role: staffMember.role, hours, salary: null, tips: 0, cost: 0 });
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   state.modal = null;
   toast('Staff assigné — définis son salaire en fin de partie');
   render();
@@ -1123,6 +1143,7 @@ async function submitEditStaffAssignment(){
   a.tips = tips;
   a.cost = salary + tips;
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   state.modal = null;
   toast('Rémunération enregistrée');
   render();
@@ -1131,6 +1152,7 @@ async function removeStaffAssignment(gameId, assignmentId){
   const game = state.games.find(g=>g.id===gameId);
   game.staffAssignments = game.staffAssignments.filter(a=>a.id!==assignmentId);
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   render();
 
 }
@@ -1150,6 +1172,7 @@ async function submitAddExpense(){
   if(!game.expenses) game.expenses = [];
   game.expenses.push({ id: uid('e'), label, amount });
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   state.modal = null;
   toast('Frais ajouté');
   render();
@@ -1158,6 +1181,7 @@ async function removeExpense(gameId, expenseId){
   const game = state.games.find(g=>g.id===gameId);
   game.expenses = game.expenses.filter(e=>e.id!==expenseId);
   await saveGames(state.games);
+  try{ if(window.pokerSync && window.pokerSync.pushToSupabase){ window.pokerSync.pushToSupabase({ ltdv_games: [game] }).catch(e=>console.error('push err',e)); } }catch(e){}
   render();
 }
 
