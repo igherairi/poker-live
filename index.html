@@ -17,6 +17,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+<script src="./sync.js"></script>
 <style>
   :root{
     --bg:#12293f;
@@ -597,7 +599,26 @@ function shiftCalendarMonth(delta){
   state.calendarMonth = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
   render();
 }
-function openGame(id){ state.activeGameId = id; state.view = 'game-detail'; render(); }
+function openGame(id){
+  // unsubscribe previous
+  try{ if(window.pokerSync && window.pokerSync.unsubscribeFromGame && window._currentGameSub) { window.pokerSync.unsubscribeFromGame(window._currentGameSub); window._currentGameSub = null; } }catch(e){console.error(e);} 
+  state.activeGameId = id; state.view = 'game-detail'; render();
+  // subscribe to realtime updates for this game (if available)
+  try{
+    if(window.pokerSync && window.pokerSync.subscribeToGame){
+      window._currentGameSub = window.pokerSync.subscribeToGame(id, (payload)=>{
+        try{ // payload may contain new record
+          if(payload && payload.new){
+            // find and replace game in state.games
+            const updated = payload.new;
+            state.games = state.games.map(g=>g.id===updated.id? updated : g);
+            render();
+          }
+        }catch(e){console.error('realtime handler',e);}      
+      });
+    }
+  }catch(e){console.error('subscribe failed',e);} 
+}
 
 /* ---------- Modal ---------- */
 function closeModal(){ state.modal = null; render(); }
