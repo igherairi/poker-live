@@ -308,6 +308,7 @@ async function loadPlayers(){
 }
 async function savePlayers(arr){
   try{ await window.storage.set('ltdv_players', JSON.stringify(arr), true); }catch(e){ console.error(e); }
+  try{ if(window.pokerSync && typeof window.pokerSync.pushToSupabase==='function'){ window.pokerSync.pushToSupabase({ ltdv_players: arr }).catch(e=>console.error('push players err',e)); } }catch(e){}
 }
 async function loadGames(){
   try{ const r = await window.storage.get('ltdv_games', true); return r ? JSON.parse(r.value) : []; }
@@ -322,6 +323,7 @@ async function loadStaff(){
 }
 async function saveStaff(arr){
   try{ await window.storage.set('ltdv_staff', JSON.stringify(arr), true); }catch(e){ console.error(e); }
+  try{ if(window.pokerSync && typeof window.pokerSync.pushToSupabase==='function'){ window.pokerSync.pushToSupabase({ ltdv_staff: arr }).catch(e=>console.error('push staff err',e)); } }catch(e){}
 }
 async function loadCommunityChat(){
   try{ const r = await window.storage.get('ltdv_community_chat', true); return r ? JSON.parse(r.value) : []; }
@@ -329,6 +331,7 @@ async function loadCommunityChat(){
 }
 async function saveCommunityChat(arr){
   try{ await window.storage.set('ltdv_community_chat', JSON.stringify(arr), true); }catch(e){ console.error(e); }
+  try{ if(window.pokerSync && typeof window.pokerSync.pushToSupabase==='function'){ window.pokerSync.pushToSupabase({ ltdv_community_chat: arr }).catch(e=>console.error('push community err',e)); } }catch(e){}
 }
 async function loadDmMessages(){
   try{ const r = await window.storage.get('ltdv_dm_messages', true); return r ? JSON.parse(r.value) : []; }
@@ -336,6 +339,7 @@ async function loadDmMessages(){
 }
 async function saveDmMessages(arr){
   try{ await window.storage.set('ltdv_dm_messages', JSON.stringify(arr), true); }catch(e){ console.error(e); }
+  try{ if(window.pokerSync && typeof window.pokerSync.pushToSupabase==='function'){ window.pokerSync.pushToSupabase({ ltdv_dm_messages: arr }).catch(e=>console.error('push dm err',e)); } }catch(e){}
 }
 async function loadAppUrl(){
   try{ const r = await window.storage.get('ltdv_app_url', true); return r ? r.value : ''; }
@@ -399,6 +403,21 @@ async function init(){
   }
   state.loading = false;
   render();
+  // Attempt to subscribe to realtime channels (if config available)
+  try{
+    if(window.pokerSync){
+      // players
+      try{ window.pokerSync.subscribeToPlayers((payload)=>{ try{ if(!payload) return; const n = payload.new, d = payload.old; if(n){ const idx = state.players.findIndex(p=>p.id===n.id); if(idx>=0) state.players[idx]=n; else state.players.push(n); render(); } else if(d && !n){ state.players = state.players.filter(p=>p.id!==d.id); render(); } }catch(e){console.error('player rt handler',e);} }); }catch(e){}
+      // community chat
+      try{ window.pokerSync.subscribeToCommunity((payload)=>{ try{ if(!payload) return; const n = payload.new, d = payload.old; if(n){ // insertion or update
+            const idx = state.communityChat.findIndex(c=>c.id===n.id);
+            if(idx>=0) state.communityChat[idx]=n; else state.communityChat.push(n);
+            render();
+          } else if(d && !n){ state.communityChat = state.communityChat.filter(c=>c.id!==d.id); render(); } }catch(e){console.error('community rt handler',e);} }); }catch(e){}
+      // dm messages
+      try{ window.pokerSync.subscribeToDm((payload)=>{ try{ if(!payload) return; const n = payload.new, d = payload.old; if(n){ const idx = state.dmMessages.findIndex(m=>m.id===n.id); if(idx>=0) state.dmMessages[idx]=n; else state.dmMessages.push(n); render(); } else if(d && !n){ state.dmMessages = state.dmMessages.filter(m=>m.id!==d.id); render(); } }catch(e){console.error('dm rt handler',e);} }); }catch(e){}
+    }
+  }catch(e){ console.error('realtime subscribe failed',e); }
 }
 function canManage(g){
   return !!state.currentPlayer && (g.organizerId===state.currentPlayer.id || state.currentPlayer.isAdmin);

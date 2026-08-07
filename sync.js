@@ -191,30 +191,41 @@
     }
   }
 
-  async function pushToSupabase(cfg, payload){
-    // Upsert players and games to Supabase/PostgREST using on_conflict=id and Prefer resolution
+  async function pushToSupabase(cfgOrPayload, maybePayload){
+    // Flexible signature: pushToSupabase(payload) or pushToSupabase(cfg, payload)
     try{
-      const base = cfg.url.replace(/\/$/, '');
+      let cfg = cfgOrPayload, payload = maybePayload;
+      if(!maybePayload){ payload = cfgOrPayload; cfg = loadConfig(); }
+      cfg = cfg || loadConfig();
+      const base = (cfg.url || '').replace(/\/$/, '');
       const tokenHeader = cfg.token ? { 'Authorization': 'Bearer '+cfg.token } : {};
-      const headers = Object.assign({ 'apikey': cfg.key, 'Content-Type':'application/json', 'Prefer': 'resolution=merge-duplicates,return=representation' }, tokenHeader);
+      const headers = Object.assign({ 'apikey': cfg.key || '', 'Content-Type':'application/json', 'Prefer': 'resolution=merge-duplicates,return=representation' }, tokenHeader);
 
       function genId(prefix){ return prefix+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
       function ensureRecords(arr, prefix){ return (arr||[]).map(r=>{ const rec = typeof r==='string'? JSON.parse(r): r || {}; if(!rec.id) rec.id = genId(prefix); if(!rec.updated_at) rec.updated_at = new Date().toISOString(); return rec; }); }
 
-      if(Array.isArray(payload.ltdv_players) && payload.ltdv_players.length){
-        const recs = ensureRecords(payload.ltdv_players, 'player');
-        const res = await fetch(base+'/rest/v1/players?on_conflict=id', { method:'POST', headers, body: JSON.stringify(recs) });
-        if(!res.ok) console.error('players upsert failed', await res.text()); else console.log('players upserted', await res.json());
-      }
+      const map = [
+        ['ltdv_players','players','player'],
+        ['ltdv_games','games','game'],
+        ['ltdv_staff','staff','staff'],
+        ['ltdv_community_chat','community_chat','msg'],
+        ['ltdv_dm_messages','dm_messages','dm']
+      ];
 
-      if(Array.isArray(payload.ltdv_games) && payload.ltdv_games.length){
-        const recs = ensureRecords(payload.ltdv_games, 'game');
-        const res = await fetch(base+'/rest/v1/games?on_conflict=id', { method:'POST', headers, body: JSON.stringify(recs) });
-        if(!res.ok) console.error('games upsert failed', await res.text()); else console.log('games upserted', await res.json());
+      if(!base || !cfg.key){ console.warn('Supabase config missing (url/key). Push aborted.'); return; }
+
+      for(const [localKey, table, prefix] of map){
+        if(Array.isArray(payload && payload[localKey]) && payload[localKey].length){
+          const recs = ensureRecords(payload[localKey], prefix);
+          try{
+            const res = await fetch(base+'/rest/v1/'+table+'?on_conflict=id', { method:'POST', headers, body: JSON.stringify(recs) });
+            if(!res.ok) console.error(table+' upsert failed', await res.text()); else console.log(table+' upserted', await res.json());
+          }catch(e){ console.error('network error upserting '+table, e); }
+        }
       }
 
       console.log('Push complete (check supabase console and response logs).');
-    }catch(err){ console.error('push error',err); alert('Push error: '+err.message); }
+    }catch(err){ console.error('push error',err); try{ alert('Push error: '+err.message); }catch(e){} }
   }
 
   async function pullFromSupabase(cfg){
@@ -283,6 +294,55 @@
     if(!ch) return;
     try{ ch.unsubscribe(); }catch(e){ console.error('unsubscribe failed', e); }
     delete window.pokerSync._channels[key];
+  };
+
+  // Subscribe to players / community / dm tables (unfiltered global channels)
+  window.pokerSync.subscribeToPlayers = function(onChange){
+    const key = 'players_all';
+    if(window.pokerSync._channels[key]) return key;
+    (async ()=>{
+      const client = await getSupabaseClient();
+      if(!client){ console.warn('Supabase client not available for realtime'); return; }
+      try{
+        const channel = client.channel('public:players')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, (payload)=>{ if(typeof onChange==='function') onChange(payload); })
+          .subscribe();
+        window.pokerSync._channels[key] = channel;
+      }catch(e){ console.error('subscribeToPlayers error', e); }
+    })();
+    return key;
+  };
+
+  window.pokerSync.subscribeToCommunity = function(onChange){
+    const key = 'community_all';
+    if(window.pokerSync._channels[key]) return key;
+    (async ()=>{
+      const client = await getSupabaseClient();
+      if(!client){ console.warn('Supabase client not available for realtime'); return; }
+      try{
+        const channel = client.channel('public:community_chat')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'community_chat' }, (payload)=>{ if(typeof onChange==='function') onChange(payload); })
+          .subscribe();
+        window.pokerSync._channels[key] = channel;
+      }catch(e){ console.error('subscribeToCommunity error', e); }
+    })();
+    return key;
+  };
+
+  window.pokerSync.subscribeToDm = function(onChange){
+    const key = 'dm_all';
+    if(window.pokerSync._channels[key]) return key;
+    (async ()=>{
+      const client = await getSupabaseClient();
+      if(!client){ console.warn('Supabase client not available for realtime'); return; }
+      try{
+        const channel = client.channel('public:dm_messages')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_messages' }, (payload)=>{ if(typeof onChange==='function') onChange(payload); })
+          .subscribe();
+        window.pokerSync._channels[key] = channel;
+      }catch(e){ console.error('subscribeToDm error', e); }
+    })();
+    return key;
   };
 
   // expose
