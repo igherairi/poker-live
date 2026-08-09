@@ -7,7 +7,8 @@ description: >-
   Bannit les formules creuses typiques des IA, la ponctuation-tic et les
   structures rhétoriques automatiques, pour un rendu naturel et direct.
   Utiliser quand on demande d'écrire, réécrire, « humaniser », « rendre moins
-  IA », dé-sloper, ou nettoyer un texte, un commit ou une PR.
+  IA », dé-sloper, ou nettoyer un texte, un commit ou une PR. Fonctionne en
+  français et en anglais (voir references/english.md pour les textes anglais).
 ---
 
 # Stop Slop — écriture sans tics IA
@@ -51,12 +52,14 @@ Chaque phrase doit apporter une information ou une opinion. Si une phrase peut
   parenthèse, point, ou deux-points. (Le `—` reste OK dans une vraie incise.)
 - Emojis décoratifs en début de puce, gras sur chaque mot-clé, « ✨/🚀/🔥 » de remplissage.
 
-## À bannir — anglais (si le texte est en anglais)
+## Texte en anglais
 
-- « It's not just X, it's Y », « In today's fast-paced world »
-- « delve », « leverage », « seamless », « robust », « game-changer »
-- « It's important to note that », « Let's dive in », « In conclusion »
-- « Whether you're a … or a … », « the world of … »
+Si le texte à produire est **en anglais**, applique la version anglaise
+complète : **charge `references/english.md`** et suis-la (liste à bannir,
+bonnes pratiques et passe de contrôle en anglais). Aperçu des pires tics :
+« It's not just X, it's Y », « In today's fast-paced world », « delve »,
+« leverage », « seamless », « robust », « It's important to note that »,
+« Let's dive in », « In conclusion ».
 
 ## À bannir — code, commits, PR
 
