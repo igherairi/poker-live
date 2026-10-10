@@ -301,32 +301,29 @@
   .felt-label{display:flex;justify-content:space-between;align-items:center;margin:-22px 6px 30px;}
   .felt{
     --felt:#0e6b52;--felt-deep:#073d31;--rail:#0a1622;
-    position:relative;width:100%;aspect-ratio:3/4;max-height:560px;margin:0 auto;
+    position:relative;width:100%;aspect-ratio:10/16;max-height:640px;margin:0 auto;
   }
   .felt-rail{
-    position:absolute;inset:7% 9%;border-radius:999px;
-    background:linear-gradient(160deg,#1c2b3a 0%,var(--rail) 45%,#050c13 100%);
-    box-shadow:0 18px 40px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.08),inset 0 -2px 6px rgba(0,0,0,0.6);
+    position:absolute;inset:5% 13%;border-radius:999px;
+    background:linear-gradient(100deg,#5d6a76 0%,#c9d2da 22%,#7d8a96 48%,#e3e9ee 74%,#66737f 100%);
+    box-shadow:0 0 0 3px #060e16,0 22px 44px rgba(0,0,0,0.6),inset 0 1px 1px rgba(255,255,255,0.6),inset 0 -2px 3px rgba(0,0,0,0.5);
   }
   .felt-surface{
-    position:absolute;inset:5.5%;border-radius:999px;overflow:hidden;
-    background:radial-gradient(ellipse 70% 55% at 50% 42%,#14866a 0%,var(--felt) 45%,var(--felt-deep) 100%);
-    box-shadow:inset 0 0 0 2px rgba(0,0,0,0.35),inset 0 10px 30px rgba(0,0,0,0.45);
+    position:absolute;inset:11px;border-radius:999px;overflow:hidden;
+    background:radial-gradient(ellipse 75% 60% at 50% 45%,#169a68 0%,#0e7a52 50%,#07502f 100%);
+    box-shadow:0 0 0 2px rgba(0,0,0,0.45),inset 0 12px 30px rgba(0,0,0,0.45),inset 0 -8px 20px rgba(0,0,0,0.3);
   }
   .felt-surface::after{
     content:'';position:absolute;inset:7px;border-radius:999px;border:1px dashed rgba(255,255,255,0.12);pointer-events:none;
   }
   .felt-center{
-    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-    text-align:center;pointer-events:none;padding:0 16%;
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;
+    text-align:center;pointer-events:none;padding:18% 10%;
   }
-  .felt-watermark{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;color:rgba(255,255,255,0.10);line-height:1;}
-  .felt-pot{
-    display:inline-flex;align-items:center;gap:8px;background:rgba(3,14,12,0.55);border-radius:999px;
-    padding:5px 14px 5px 6px;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06);
-  }
-  .felt-pot .lbl{font-size:13px;color:#7fd3ff;font-weight:600;letter-spacing:0.5px;}
-  .felt-pot .amt{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.5px;color:#fff;line-height:1;font-variant-numeric:tabular-nums;}
+  .felt-watermark{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:3px;color:rgba(255,255,255,0.13);line-height:1;}
+  .felt-pot{display:flex;flex-direction:column;align-items:center;gap:2px;text-shadow:0 1px 3px rgba(0,0,0,0.45);}
+  .felt-pot .lbl{font-size:15px;color:rgba(255,255,255,0.85);font-weight:600;letter-spacing:0.5px;}
+  .felt-pot .amt{display:inline-flex;align-items:center;gap:8px;font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:0.5px;color:#fff;line-height:1;font-variant-numeric:tabular-nums;}
   .chip-stack{position:relative;width:22px;height:22px;flex-shrink:0;}
   .chip-stack i{
     position:absolute;left:0;width:22px;height:22px;border-radius:50%;
@@ -335,7 +332,9 @@
   }
   .chip-stack i:nth-child(1){top:3px;filter:brightness(0.75);}
   .chip-stack i:nth-child(2){top:0;}
-  .felt-meta{font-size:13px;color:rgba(255,255,255,0.55);letter-spacing:0.5px;}
+  .felt-meta{display:flex;flex-direction:column;gap:1px;font-size:13px;color:rgba(255,255,255,0.6);letter-spacing:0.5px;line-height:1.2;}
+  .felt-meta strong{font-weight:700;color:rgba(255,255,255,0.75);font-size:14px;}
+  .seat-status{display:block;margin-top:1px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#d7e6f1;}
   .felt-live{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);font-weight:600;}
   .felt-live .dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse-dot 1.6s infinite;}
   .seat{
@@ -369,7 +368,6 @@
     padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
   }
   .seat-flag.pending{background:#ffb84d;color:#2a1600;animation:seat-ping 1.8s ease-in-out infinite;}
-  .seat-flag.out{background:#2e5375;color:#d7e6f1;}
   .seat.cashed .seat-avatar{filter:grayscale(0.8) brightness(0.7);}
   .seat.cashed .seat-amt{color:var(--text-muted);}
   .seat.empty{cursor:default;}
@@ -379,7 +377,8 @@
   @keyframes row-flash{0%{background:rgba(45,212,160,0.18);}100%{background:transparent;}}
   @media (min-width:640px){
     .felt{aspect-ratio:16/10;}
-    .felt-rail{inset:9% 7%;}
+    .felt-rail{inset:9% 9%;background:linear-gradient(180deg,#e3e9ee 0%,#8794a0 30%,#5d6a76 60%,#c9d2da 100%);}
+    .felt-center{padding:10% 20%;}
     .seat{width:96px;left:var(--lx);top:var(--ly);}
     .seat-avatar{width:56px;height:56px;font-size:23px;}
     .seat-plate{min-width:88px;max-width:96px;}
@@ -1860,6 +1859,28 @@ function elapsedLabel(from){
   const h = Math.floor(min/60), m = min%60;
   return h ? h+' h '+String(m).padStart(2,'0') : m+' min';
 }
+// Places n sièges à intervalles réguliers sur un ovale « rectangle arrondi »
+// (côtés droits = colonnes de joueurs). a/b en % de la boîte, aspect = hauteur/largeur.
+function seatTrack(n, a, b, aspect, power){
+  const N = 720, pts = [];
+  for(let i=0;i<=N;i++){
+    const t = Math.PI/2 + i*2*Math.PI/N, c = Math.cos(t), si = Math.sin(t);
+    pts.push([50 + a*Math.sign(c)*Math.pow(Math.abs(c), 2/power), 50 + b*Math.sign(si)*Math.pow(Math.abs(si), 2/power)]);
+  }
+  const len = [0];
+  for(let i=1;i<=N;i++){
+    const dx = pts[i][0]-pts[i-1][0], dy = (pts[i][1]-pts[i-1][1])*aspect;
+    len.push(len[i-1] + Math.hypot(dx, dy));
+  }
+  const total = len[N], out = [];
+  let j = 0;
+  for(let k=0;k<n;k++){
+    const target = k*total/n;
+    while(j<N && len[j+1]<target) j++;
+    out.push(pts[j]);
+  }
+  return out;
+}
 function renderLiveTables(g){
   const meId = state.currentPlayer && state.currentPlayer.id;
   const nTables = tablesNeeded(g);
@@ -1874,16 +1895,17 @@ function renderLiveTables(g){
     const meIdx = players.findIndex(p=>p.playerId===meId);
     const ordered = meIdx>0 ? [...players.slice(meIdx), ...players.slice(0, meIdx)] : players;
     const tablePot = players.reduce((a,p)=>a+p.buyIns.reduce((x,y)=>x+y.amount,0),0);
+    const portrait = seatTrack(capacity, 37, 43, 1.6, 4);
+    const landscape = seatTrack(capacity, 43, 40, 0.625, 2.6);
     const seats = Array.from({length:capacity}, (_, k)=>{
-      const a = Math.PI/2 + k*2*Math.PI/capacity;
-      const pos = `--px:${(50+38*Math.cos(a)).toFixed(2)}%;--py:${(50+43*Math.sin(a)).toFixed(2)}%;--lx:${(50+43*Math.cos(a)).toFixed(2)}%;--ly:${(50+41*Math.sin(a)).toFixed(2)}%`;
+      const pos = `--px:${portrait[k][0].toFixed(2)}%;--py:${portrait[k][1].toFixed(2)}%;--lx:${landscape[k][0].toFixed(2)}%;--ly:${landscape[k][1].toFixed(2)}%`;
       const p = ordered[k];
       if(!p) return `<div class="seat empty" style="${pos}" aria-hidden="true"><div class="seat-avatar">Libre</div></div>`;
       const engaged = p.buyIns.reduce((x,y)=>x+y.amount,0);
       const pending = (p.requests||[]).some(r=>r.status==='pending');
       const cashed = p.cashOut!==null && p.cashOut!==undefined;
       const cls = ['seat', p.playerId===meId?'me':'', cashed?'cashed':''].filter(Boolean).join(' ');
-      const flag = pending ? '<span class="seat-flag pending">Recave ?</span>' : cashed ? '<span class="seat-flag out">Sorti</span>' : '';
+      const flag = pending ? '<span class="seat-flag pending">Recave ?</span>' : '';
       const amt = cashed ? fmt(p.cashOut)+' €' : fmt(engaged)+' €';
       const label = `${p.pseudo} : ${p.buyIns.length} recave(s), ${fmt(engaged)} € engagés${cashed?', cash-out '+fmt(p.cashOut)+' €':''}${pending?', recave en attente':''}`;
       return `
@@ -1894,6 +1916,7 @@ function renderLiveTables(g){
             ${flag}
             <span class="seat-name">${escapeHtml(p.pseudo)}</span>
             <span class="seat-amt">${amt}</span>
+            ${cashed ? '<span class="seat-status">Sorti</span>' : ''}
           </div>
         </button>`;
     }).join('');
@@ -1904,9 +1927,9 @@ function renderLiveTables(g){
           <div class="felt-rail"><div class="felt-surface">
             <div class="felt-center">
               <span class="felt-live"><span class="dot"></span>Live${g.startedAt ? ' · '+elapsedLabel(g.startedAt) : ''}</span>
-              <span class="felt-pot"><span class="chip-stack"><i></i><i></i></span><span class="lbl">Pot</span><span class="amt">${fmt(nTables>1 ? tablePot : pot)} €</span></span>
               <span class="felt-watermark">Poker Live</span>
-              <span class="felt-meta">${escapeHtml(meta)}</span>
+              <span class="felt-pot"><span class="lbl">Pot total</span><span class="amt"><span class="chip-stack"><i></i><i></i></span>${fmt(nTables>1 ? tablePot : pot)} €</span></span>
+              <span class="felt-meta"><strong>${escapeHtml(g.location || g.name)}</strong>${escapeHtml(meta)}</span>
             </div>
           </div></div>
           ${seats}
