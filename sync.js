@@ -8,6 +8,16 @@
   function saveConfig(cfg){ localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg)); }
   function loadConfig(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); }catch(e){return {};}}
 
+  // supabase-js client (loaded via CDN); shared by the auth modal and realtime helpers
+  async function getSupabaseClient(){
+    const cfg = loadConfig();
+    if(!cfg.url || !cfg.key) return null;
+    if(window.supabase && typeof window.supabase.createClient==='function'){
+      return window.supabase.createClient(cfg.url, cfg.key);
+    }
+    return null;
+  }
+
   function createUI(){
     const btn = document.createElement('button');
     btn.textContent = 'Cloud Sync';
@@ -75,15 +85,6 @@
 
     document.body.appendChild(modal);
 
-    // Auth handlers using supabase-js (loaded via CDN)
-    async function getSupabaseClient(){
-      const cfg = loadConfig();
-      if(!cfg.url || !cfg.key) return null;
-      if(window.supabase && typeof window.supabase.createClient==='function'){
-        return window.supabase.createClient(cfg.url, cfg.key);
-      }
-      return null;
-    }
 
     modal.querySelector('#poker-signup').onclick = async ()=>{
       const email = modal.querySelector('#poker-auth-email').value.trim();

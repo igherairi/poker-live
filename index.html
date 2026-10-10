@@ -296,6 +296,100 @@
     letter-spacing:1px;font-size:13px;padding:10px;border-radius:8px;
   }
   .poster-card .p-footer{text-align:center;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-top:10px;}
+  /* Live table (felt view) */
+  .felt-wrap{margin:4px -6px 18px;padding:34px 0 46px;}
+  .felt-label{display:flex;justify-content:space-between;align-items:center;margin:-22px 6px 30px;}
+  .felt{
+    --felt:#0e6b52;--felt-deep:#073d31;--rail:#0a1622;
+    position:relative;width:100%;aspect-ratio:3/4;max-height:560px;margin:0 auto;
+  }
+  .felt-rail{
+    position:absolute;inset:7% 9%;border-radius:999px;
+    background:linear-gradient(160deg,#1c2b3a 0%,var(--rail) 45%,#050c13 100%);
+    box-shadow:0 18px 40px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.08),inset 0 -2px 6px rgba(0,0,0,0.6);
+  }
+  .felt-surface{
+    position:absolute;inset:5.5%;border-radius:999px;overflow:hidden;
+    background:radial-gradient(ellipse 70% 55% at 50% 42%,#14866a 0%,var(--felt) 45%,var(--felt-deep) 100%);
+    box-shadow:inset 0 0 0 2px rgba(0,0,0,0.35),inset 0 10px 30px rgba(0,0,0,0.45);
+  }
+  .felt-surface::after{
+    content:'';position:absolute;inset:7px;border-radius:999px;border:1px dashed rgba(255,255,255,0.12);pointer-events:none;
+  }
+  .felt-center{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    text-align:center;pointer-events:none;padding:0 16%;
+  }
+  .felt-watermark{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;color:rgba(255,255,255,0.10);line-height:1;}
+  .felt-pot{
+    display:inline-flex;align-items:center;gap:8px;background:rgba(3,14,12,0.55);border-radius:999px;
+    padding:5px 14px 5px 6px;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .felt-pot .lbl{font-size:13px;color:#7fd3ff;font-weight:600;letter-spacing:0.5px;}
+  .felt-pot .amt{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.5px;color:#fff;line-height:1;font-variant-numeric:tabular-nums;}
+  .chip-stack{position:relative;width:22px;height:22px;flex-shrink:0;}
+  .chip-stack i{
+    position:absolute;left:0;width:22px;height:22px;border-radius:50%;
+    background:repeating-conic-gradient(#e94b4b 0 30deg,#fff 30deg 45deg);
+    box-shadow:inset 0 0 0 4px #e94b4b,inset 0 0 0 5px rgba(255,255,255,0.85),0 1px 2px rgba(0,0,0,0.5);
+  }
+  .chip-stack i:nth-child(1){top:3px;filter:brightness(0.75);}
+  .chip-stack i:nth-child(2){top:0;}
+  .felt-meta{font-size:13px;color:rgba(255,255,255,0.55);letter-spacing:0.5px;}
+  .felt-live{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);font-weight:600;}
+  .felt-live .dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse-dot 1.6s infinite;}
+  .seat{
+    position:absolute;left:var(--px);top:var(--py);transform:translate(-50%,-50%);width:80px;display:flex;flex-direction:column;align-items:center;
+    background:none;border:none;padding:0;color:inherit;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;
+    transition:transform 0.16s cubic-bezier(0.23,1,0.32,1);
+  }
+  .seat:active{transform:translate(-50%,-50%) scale(0.96);}
+  .seat-avatar{
+    position:relative;z-index:1;width:44px;height:44px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:0.5px;color:#fff;
+    background:linear-gradient(145deg,hsl(var(--h) 42% 50%),hsl(var(--h) 45% 27%));
+    box-shadow:0 0 0 2px #0a1622,0 0 0 3px rgba(255,255,255,0.18),0 6px 14px rgba(0,0,0,0.5);
+    text-shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+  .seat.me .seat-avatar{box-shadow:0 0 0 2px #0a1622,0 0 0 4px var(--gold-light),0 6px 16px rgba(45,212,160,0.35);}
+  .seat-plate{
+    position:relative;margin-top:-8px;padding:10px 6px 5px;min-width:74px;max-width:80px;border-radius:9px;
+    background:linear-gradient(180deg,#0d1b28,#060e16);box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 6px 14px rgba(0,0,0,0.5);
+    text-align:center;line-height:1.1;
+  }
+  .seat-name{display:block;font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .seat-amt{display:block;margin-top:2px;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:0.5px;color:#ffc65c;font-variant-numeric:tabular-nums;}
+  .seat-tag{
+    position:absolute;z-index:2;top:-6px;left:-4px;min-width:22px;padding:1px 5px;border-radius:5px;
+    background:#060e16;box-shadow:0 0 0 1px rgba(255,255,255,0.2);font-size:11px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;
+  }
+  .seat-flag{
+    position:absolute;z-index:2;top:-8px;left:50%;transform:translateX(-50%);white-space:nowrap;
+    padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  }
+  .seat-flag.pending{background:#ffb84d;color:#2a1600;animation:seat-ping 1.8s ease-in-out infinite;}
+  .seat-flag.out{background:#2e5375;color:#d7e6f1;}
+  .seat.cashed .seat-avatar{filter:grayscale(0.8) brightness(0.7);}
+  .seat.cashed .seat-amt{color:var(--text-muted);}
+  .seat.empty{cursor:default;}
+  .seat.empty .seat-avatar{background:rgba(0,0,0,0.18);box-shadow:inset 0 0 0 2px rgba(255,255,255,0.18);color:rgba(255,255,255,0.35);font-size:12px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;text-shadow:none;}
+  @keyframes seat-ping{0%,100%{box-shadow:0 0 0 0 rgba(255,184,77,0.6);}50%{box-shadow:0 0 0 6px rgba(255,184,77,0);}}
+  .participant.flash{animation:row-flash 1.2s ease-out;}
+  @keyframes row-flash{0%{background:rgba(45,212,160,0.18);}100%{background:transparent;}}
+  @media (min-width:640px){
+    .felt{aspect-ratio:16/10;}
+    .felt-rail{inset:9% 7%;}
+    .seat{width:96px;left:var(--lx);top:var(--ly);}
+    .seat-avatar{width:56px;height:56px;font-size:23px;}
+    .seat-plate{min-width:88px;max-width:96px;}
+    .felt-watermark{font-size:40px;}
+  }
+  @media (hover:hover){ .seat:not(.empty):hover .seat-plate{box-shadow:0 0 0 1px rgba(45,212,160,0.6),0 6px 14px rgba(0,0,0,0.5);} }
+  @media (prefers-reduced-motion:reduce){
+    .seat-flag.pending,.felt-live .dot{animation:none;}
+    .seat{transition:none;}
+  }
 </style>
 </head>
 <body>
@@ -1749,6 +1843,85 @@ function renderHeroGameCard(g){
   `;
 }
 
+/* ---------- Live table (felt view) ---------- */
+function seatHue(str){
+  let h = 0;
+  for(const c of String(str||'')) h = (h*31 + c.charCodeAt(0)) % 360;
+  return h;
+}
+function seatInitials(pseudo){
+  const words = String(pseudo||'?').trim().split(/[\s._-]+/).filter(Boolean);
+  const s = words.length>1 ? words[0][0]+words[1][0] : (words[0]||'?').slice(0,2);
+  return s.toUpperCase();
+}
+function elapsedLabel(from){
+  if(!from) return '';
+  const min = Math.max(0, Math.floor((Date.now()-from)/60000));
+  const h = Math.floor(min/60), m = min%60;
+  return h ? h+' h '+String(m).padStart(2,'0') : m+' min';
+}
+function renderLiveTables(g){
+  const meId = state.currentPlayer && state.currentPlayer.id;
+  const nTables = tablesNeeded(g);
+  const perTable = Math.ceil(g.participants.length / nTables);
+  const tables = [];
+  for(let t=0;t<nTables;t++) tables.push(g.participants.slice(t*perTable, (t+1)*perTable));
+  const pot = g.participants.reduce((a,p)=>a+p.buyIns.reduce((x,y)=>x+y.amount,0),0);
+  const meta = [g.variant||'NLH', g.blinds ? 'Blinds '+g.blinds : '', g.buyIn ? 'Buy-in '+fmt(g.buyIn)+' €' : ''].filter(Boolean).join(' · ');
+  return tables.map((players, t)=>{
+    const capacity = nTables>1 ? Math.max(players.length, 9) : Math.max(players.length, Math.min(9, g.maxPlayers||9));
+    // Le joueur connecté s'assoit en bas de la table, comme sur un client en ligne
+    const meIdx = players.findIndex(p=>p.playerId===meId);
+    const ordered = meIdx>0 ? [...players.slice(meIdx), ...players.slice(0, meIdx)] : players;
+    const tablePot = players.reduce((a,p)=>a+p.buyIns.reduce((x,y)=>x+y.amount,0),0);
+    const seats = Array.from({length:capacity}, (_, k)=>{
+      const a = Math.PI/2 + k*2*Math.PI/capacity;
+      const pos = `--px:${(50+38*Math.cos(a)).toFixed(2)}%;--py:${(50+43*Math.sin(a)).toFixed(2)}%;--lx:${(50+43*Math.cos(a)).toFixed(2)}%;--ly:${(50+41*Math.sin(a)).toFixed(2)}%`;
+      const p = ordered[k];
+      if(!p) return `<div class="seat empty" style="${pos}" aria-hidden="true"><div class="seat-avatar">Libre</div></div>`;
+      const engaged = p.buyIns.reduce((x,y)=>x+y.amount,0);
+      const pending = (p.requests||[]).some(r=>r.status==='pending');
+      const cashed = p.cashOut!==null && p.cashOut!==undefined;
+      const cls = ['seat', p.playerId===meId?'me':'', cashed?'cashed':''].filter(Boolean).join(' ');
+      const flag = pending ? '<span class="seat-flag pending">Recave ?</span>' : cashed ? '<span class="seat-flag out">Sorti</span>' : '';
+      const amt = cashed ? fmt(p.cashOut)+' €' : fmt(engaged)+' €';
+      const label = `${p.pseudo} : ${p.buyIns.length} recave(s), ${fmt(engaged)} € engagés${cashed?', cash-out '+fmt(p.cashOut)+' €':''}${pending?', recave en attente':''}`;
+      return `
+        <button class="${cls}" style="${pos}" data-seat-jump="${p.playerId}" aria-label="${escapeHtml(label)}">
+          <div class="seat-avatar" style="--h:${seatHue(p.pseudo)}">${escapeHtml(seatInitials(p.pseudo))}</div>
+          <div class="seat-plate">
+            ${p.buyIns.length>1 ? `<span class="seat-tag">×${p.buyIns.length}</span>` : ''}
+            ${flag}
+            <span class="seat-name">${escapeHtml(p.pseudo)}</span>
+            <span class="seat-amt">${amt}</span>
+          </div>
+        </button>`;
+    }).join('');
+    return `
+      <div class="felt-wrap">
+        ${nTables>1 ? `<div class="felt-label"><span class="eyebrow">Table ${t+1} / ${nTables}</span><span class="muted">${players.length} joueurs · ${fmt(tablePot)} €</span></div>` : ''}
+        <div class="felt">
+          <div class="felt-rail"><div class="felt-surface">
+            <div class="felt-center">
+              <span class="felt-live"><span class="dot"></span>Live${g.startedAt ? ' · '+elapsedLabel(g.startedAt) : ''}</span>
+              <span class="felt-pot"><span class="chip-stack"><i></i><i></i></span><span class="lbl">Pot</span><span class="amt">${fmt(nTables>1 ? tablePot : pot)} €</span></span>
+              <span class="felt-watermark">Poker Live</span>
+              <span class="felt-meta">${escapeHtml(meta)}</span>
+            </div>
+          </div></div>
+          ${seats}
+        </div>
+      </div>`;
+  }).join('');
+}
+function jumpToSeatRow(playerId){
+  const row = document.getElementById('seat-row-'+playerId);
+  if(!row) return;
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  row.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+  row.classList.remove('flash'); void row.offsetWidth; row.classList.add('flash');
+}
+
 function renderGameCard(g){
   const statusBadge = g.status==='live' ? '<span class="badge live">● Live</span>' : g.status==='completed' ? '<span class="badge done">Terminée</span>' : '<span class="badge gold">À venir</span>';
   const dateStr = g.date ? new Date(g.date+'T'+(g.time||'00:00')).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) + (g.time?' · '+g.time:'') : '';
@@ -1881,6 +2054,7 @@ function renderGameDetail(){
           <div class="eyebrow">Table en cours (${g.participants.length} joueurs)</div>
           ${manage ? `<button class="btn small secondary" data-add-player="${g.id}">+ Ajouter un joueur</button>` : ''}
         </div>
+        ${renderLiveTables(g)}
         ${g.participants.map(p=>{
           const totalBuyIn = p.buyIns.reduce((a,b)=>a+b.amount,0);
           const pending = (p.requests||[]).filter(r=>r.status==='pending');
@@ -1888,7 +2062,7 @@ function renderGameDetail(){
           const isMe = p.playerId===state.currentPlayer.id;
           const arrivalStr = p.joinedAt ? new Date(p.joinedAt).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
           return `
-          <div class="participant" style="flex-direction:column;align-items:stretch">
+          <div class="participant" id="seat-row-${p.playerId}" style="flex-direction:column;align-items:stretch">
             <div class="row">
               <div>
                 <div class="p-name">${escapeHtml(p.pseudo)}</div>
@@ -2999,6 +3173,7 @@ function attachAppEvents(){
     removeParticipantAdmin(gameId, playerId);
   });
   document.querySelectorAll('[data-close]').forEach(el=>el.onclick=()=>closeGame(el.getAttribute('data-close')));
+  document.querySelectorAll('[data-seat-jump]').forEach(el=>el.onclick=()=>jumpToSeatRow(el.getAttribute('data-seat-jump')));
   document.querySelectorAll('[data-buyin]').forEach(el=>el.onclick=()=>{
     const [gameId, playerId] = el.getAttribute('data-buyin').split('|');
     openAddBuyinModal(gameId, playerId);
