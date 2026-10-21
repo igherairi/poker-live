@@ -1676,6 +1676,7 @@ function renderApp(){
       <button class="${state.view==='games'?'active':''}" data-nav="games">Parties</button>
       <button class="${state.view==='messages'?'active':''}" data-nav="messages">💬 Messages${unreadMsg>0?` <span class="badge live" style="padding:1px 6px;font-size:10px">${unreadMsg}</span>`:''}</button>
       <button class="${state.view==='profile'?'active':''}" data-nav="profile">Profil</button>
+      <button class="${state.view==='rules'?'active':''}" data-nav="rules">Règlement</button>
       ${state.currentPlayer.isAdmin ? `<button class="${state.view==='leaderboard'?'active':''}" data-nav="leaderboard">Classement</button>` : ''}
       ${state.currentPlayer.isAdmin ? `<button class="${state.view==='admin'?'active':''}" data-nav="admin">⚙ Admin${pendingReq>0?` <span class="badge live" style="padding:1px 6px;font-size:10px">${pendingReq}</span>`:''}</button>` : ''}
     </nav>
@@ -1693,6 +1694,7 @@ function renderView(){
   if(state.view==='leaderboard') return state.currentPlayer.isAdmin ? renderLeaderboard() : renderDashboard();
   if(state.view==='profile') return renderProfile();
   if(state.view==='messages') return renderMessages();
+  if(state.view==='rules') return renderRules();
   if(state.view==='player-analytics') return state.currentPlayer.isAdmin ? renderPlayerAnalyticsPage() : renderDashboard();
   if(state.view==='admin') return state.currentPlayer.isAdmin ? renderAdmin() : renderDashboard();
   return '';
@@ -2117,6 +2119,16 @@ function renderLeaderboard(){
           <div class="${p.net>=0?'pos':'neg'}" style="font-family:'Bebas Neue',sans-serif;font-size:20px">${euro(p.net)}</div>
         </div>
       `).join('') : `<div class="empty-state"><div class="icon">🏆</div>Aucune partie clôturée pour l'instant.</div>`}
+    </div>
+  `;
+}
+
+function renderRules(){
+  return `
+    <h2 class="card-title" style="margin-bottom:14px">Règlement</h2>
+    <div class="card flat">
+      <h3 class="card-title" style="font-size:18px;margin-bottom:6px">Coup à tapis</h3>
+      <p>Lors d'un coup à tapis, le 1er joueur de parole annonce le choix du tirage : <strong>1 board</strong> ou <strong>2 boards</strong>.</p>
     </div>
   `;
 }
